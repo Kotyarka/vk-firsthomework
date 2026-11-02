@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="screen_padding">16dp</dimen>
+    <dimen name="card_spacing">8dp</dimen>
+    <dimen name="card_radius">8dp</dimen>
+    <dimen name="card_text_size">22sp</dimen>
+    <dimen name="button_height">56dp</dimen>
+    <dimen name="button_spacing">16dp</dimen>
+    <dimen name="list_bottom_padding">16dp</dimen>
+</resources>

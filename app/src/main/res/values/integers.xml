@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="portrait_columns">3</integer>
+    <integer name="landscape_columns">4</integer>
+    <integer name="initial_count">0</integer>
+    <integer name="card_text_sp">22</integer>
+
+</resources>
