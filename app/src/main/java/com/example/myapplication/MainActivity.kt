@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -25,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,7 +59,15 @@ fun CardsScreen() {
         R.integer.initial_count
     )
 
-    var count by rememberSaveable {
+    var numbers by rememberSaveable {
+        mutableStateOf(List(initialCount) { it })
+    }
+
+    var removedNumbers by rememberSaveable {
+        mutableStateOf(emptyList<Int>())
+    }
+
+    var nextNumber by rememberSaveable {
         mutableIntStateOf(initialCount)
     }
 
@@ -110,14 +121,28 @@ fun CardsScreen() {
                 )
             )
         ) {
-            items(count) { index ->
-                NumberCard(index)
+            items(items = numbers, key = { it }) { number ->
+                NumberCard(
+                    number = number,
+                    onClick = {
+                        if (number in numbers) {
+                            numbers = numbers - number
+                            removedNumbers = removedNumbers + number
+                        }
+                    }
+                )
             }
         }
 
         Button(
             onClick = {
-                count++
+                if (removedNumbers.isNotEmpty()) {
+                    numbers = numbers + removedNumbers.last()
+                    removedNumbers = removedNumbers.dropLast(1)
+                } else {
+                    numbers = numbers + nextNumber
+                    nextNumber++
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -139,9 +164,9 @@ fun CardsScreen() {
 }
 
 @Composable
-fun NumberCard(index: Int) {
+fun NumberCard(number: Int, onClick: () -> Unit) {
 
-    val cardColor = if (index % 2 == 0) {
+    val cardColor = if (number % 2 == 0) {
         colorResource(R.color.card_red)
     } else {
         colorResource(R.color.card_blue)
@@ -156,11 +181,12 @@ fun NumberCard(index: Int) {
                 shape = RoundedCornerShape(
                     dimensionResource(R.dimen.card_radius)
                 )
-            ),
+            )
+            .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = index.toString(),
+            text = number.toString(),
             color = colorResource(R.color.card_text),
             fontSize = integerResource(
                 R.integer.card_text_sp
